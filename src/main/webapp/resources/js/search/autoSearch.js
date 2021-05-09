@@ -46,7 +46,7 @@ function autoComplete() {
 						location.href = '/main/proj/detail?projCode=' + projCode;
 					} else {
 						var userCode = data.code;
-						location.href = '/main/user/detail?projCode=' + userCode;
+						location.href = '/main/user/detail?userCode=' + userCode;
 					}
 				}, error : function(error) {
 					console.log(error);
