@@ -1,0 +1,98 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'war'
+}
+
+group = 'com.c4i'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+war {
+    archiveBaseName = "ROOT"
+    archiveFileName = "ROOT.war"
+    archiveVersion = "1.0.0"
+}
+bootWar.enabled = false     // 기본 war배포는 bootWar로 되어있음
+war.enabled = true
+
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+//test {
+//    useJUnitPlatform()
+//}
+
+dependencies {
+	compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4' //commons-fileupload
+	compile group: 'commons-io', name: 'commons-io', version: '2.4' // commons-io
+	compile group: 'org.apache.solr', name: 'solr-solrj', version: '7.7.0' // solrJ
+	implementation 'org.springframework.boot:spring-boot-starter-validation' 	// @Valid 사용 라이브러리 
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'      // Spring Boot Actuator
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'      // Spring Data JPA
+    implementation 'org.springframework.boot:spring-boot-starter-security'      // Spring Security
+    implementation 'org.springframework.security:spring-security-taglibs'       // Spring Security - taglibs
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'        // log4j2
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'           // Spring Web
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.3'  // MyBatis Framework
+    implementation 'org.springframework.boot:spring-boot-devtools'              // DevTools
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // MariaDB
+    // implementation 'org.mariadb.jdbc:mariadb-java-client:2.4.2' 				// driverspy에서 먹히지 않음
+    // MySQL = MariaDB
+    implementation 'mysql:mysql-connector-java:5.1.49' 							// driverspy를 사용하기 위해 변경
+
+    // 개발환경
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'       // 외부 톰캣에 war 배포 할 때, 제외
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // Apache
+    providedRuntime("org.apache.tomcat.embed:tomcat-embed-jasper")              // 외부 톰캣에 war 배포 할 때, 제외
+    implementation("org.apache.tiles:tiles-jsp:3.0.8")
+    
+    // JSTL
+    implementation("javax.servlet:jstl:1.2")
+
+    // biz - 외부 라이브러리
+    implementation("org.apache.poi:poi:3.17")                                   // AppProperty
+    implementation("org.apache.poi:poi-ooxml:3.17")                             // AppProperty
+    implementation("org.apache.commons:commons-lang3:3.9")                      // FileUtil - StringUtils
+    implementation("commons-io:commons-io:2.6")                                 // FileUtil - FileUtils
+    implementation("com.googlecode.juniversalchardet:juniversalchardet:1.0.3")  // FileUtil - mozilla
+    implementation("com.google.guava:guava:28.0-jre")                           // FileUtil - ServerPage
+    implementation("com.navercorp.lucy:lucy-xss-servlet:2.0.0")                 // lucy-xss
+    implementation("net.sf.jxls:jxls-core:1.0.6")                               // JxlsView - jxls
+    implementation("net.sf.jmimemagic:jmimemagic:0.1.5")                        // FileDownload - 예산내역 첨부파일
+    
+    // SQL
+    implementation("org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16")     // 쿼리문용
+
+ 	// Solr - 검색엔진
+    implementation('com.googlecode.json-simple:json-simple:1.1.1')	// JSONObject
+	
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions
+        PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <!-- Default Main Template -->
+    <definition name="f:*/*" template="/WEB-INF/views/layout/default.jsp" >
+        <put-attribute name="body" 	value="/WEB-INF/views/main/{1}/{2}.jsp"  />
+    </definition>
+
+	<!-- index.jsp -->
+    <definition name="m:*" template="/WEB-INF/views/layout/default.jsp" >
+        <put-attribute name="body" 	value="/WEB-INF/views/main/{1}.jsp"  />
+    </definition>
+
+    <!-- 에러 화면 사용 -->
+    <definition name="e:*" template="/WEB-INF/views/layout/default.jsp" >
+        <put-attribute name="body" 	value="/WEB-INF/views/error/{1}.jsp"  />
+    </definition>
+</tiles-definitions>

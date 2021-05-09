@@ -1,0 +1,77 @@
+@charset "EUC-KR";
+/* input 테두리 제거  */
+.fixed_user:disabled {
+	background: white;
+	border: none;
+	border-right: 0px;
+	border-top: 0px;
+	boder-left: 0px;
+	boder-bottom: 0px;
+}
+/*[프로젝트 상세정보] 프로젝트 수정   */
+.update_proj {
+/* 	border: none; */
+/* 	border-right: 0px; */
+/* 	border-top: 0px; */
+/* 	boder-left: 0px; */
+/* 	boder-bottom: 0px; */ 
+	border-radius: 0.15rem; 
+	border:1px solid #dcdce8;
+}
+
+
+td {
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+/* [사용자 상세정보] 해당 프로젝트명 호버시 색깔 변경 */
+#inputed_proj_name:hover {
+	color: #007BFF;
+}
+/* [사용자 상제정보] 해당 사용자명 호버시 색깔 변경 */
+#inputed_user_name:hover {
+	color: #007BFF;	
+}
+
+/* [사용자 상세정보]사용자 상세정보 컬럼(disabled인 상태) custom  */
+.update_user:disabled {
+	background: white;
+	border: none;
+	cursor: default;
+	border-right: 0px;
+	border-top: 0px;
+	boder-left: 0px;
+	boder-bottom: 0px;
+}
+/*[프로젝트 상세정보 , 사용자 상세정보 ] 이력서 카테고리 */
+.career_category {
+	background: #e7e7f5;
+	border: 1px solid #c4c9c4 !important;
+	vertical-align: middle !important;
+}
+/* [ 사용자 상세정보  ] 사용자 상세정보 및  투입된 프로젝트 현황 */
+.fixedUserData {
+	display: flex;
+	flex-wrap: nowrap;
+}
+/* [프로젝트 상세정보] 수정가능한  프로젝트 상세정보 비활성화  */
+.update_proj:disabled {
+	background: white;
+	border: none;
+	border-right: 0px;
+	cursor : default;
+	border-top: 0px;
+	boder-left: 0px;
+	boder-bottom: 0px;
+}
+/* [사용자 현황] 해당 사용자명 마우스 호버 시 컬러 변경  */
+#user_name:hover {
+	color: #007BFF;	
+}
+
+/* [프로젝트 현황 ] 해당 프로젝트명 마우스 호버 시 컬러 변경  */
+#proj_name:hover {
+	color: #007BFF;
+}

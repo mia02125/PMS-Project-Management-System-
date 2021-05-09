@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c4i.pms.mapper.main.CareerMapper">
+	<!-- 
+	2020-12-24 리팩토링 : resultMap Collection 적용 
+	 -->
+   <!-- userVO - CareerVO  -->
+   <resultMap type="com.c4i.pms.main.user.vo.UserVO" id="userMap">
+   		<id column="USER_CODE" property="userCode"/>
+   		<result column="USER_NAME" property="userName"/>
+   		<result column="USER_POST" property="userPost"/>
+   		<result column="USER_BUSEO" property="userBuseo"/>
+   		<result column="USER_LEVEL" property="userLevel"/>
+   		<result column="USER_COMP" property="userComp"/>
+   		<result column="USER_TEL" property="userTel"/>
+   		<result column="USER_EMAIL" property="userEmail"/>
+   		<result column="USER_DELETE" property="userDelete"/>
+   		<result column="USER_JOB" property="userJob"/>
+   		<result column="USER_DIVISION" property="userDivision"/>
+   		<result column="USER_MODIFYDATE" property="userModifyDate"/>
+   		<!-- 1:1 관계 -->
+   		<association javaType="com.c4i.pms.main.career.vo.CareerVO" property="career">
+   			<id column="RES_CODE" property="resCode"/>
+   			<result column="RES_SSN1" property="resSsn1"/>
+   			<result column="RES_SSN2" property="resSsn2"/>
+   			<result column="RES_CAREERDAYS" property="resCareerDays"/>
+   			<result column="RES_ADDR" property="resAddr"/>
+   			<result column="RES_EDU_NAME" property="resEduName"/>
+   			<result column="RES_EDU_STDATE" property="resEduStDate"/>
+   			<result column="RES_EDU_FIDATE" property="resEduFiDate"/>
+   			<result column="RES_EDU_MAJOR" property="resEduMajor"/>
+   		</association>
+	</resultMap>
+	<!-- CareerVO ( CertVO, CompVO ,ProjVO ) -->
+	<resultMap type="com.c4i.pms.main.career.vo.CareerVO" id="careerMap">
+		<id column="RES_CODE" property="resCode"/>
+		<result column="RES_SSN1" property="resSsn1"/>
+		<result column="RES_SSN2" property="resSsn2"/>
+		<result column="RES_CAREERDAYS" property="resCareerDays"/>
+		<result column="RES_ADDR" property="resAddr"/>
+		<result column="RES_EDU_NAME" property="resEduName"/>
+		<result column="RES_EDU_STDATE" property="resEduStDate"/>
+		<result column="RES_EDU_FIDATE" property="resEduFiDate"/>
+		<result column="RES_EDU_MAJOR" property="resEduMajor"/>
+		<!-- 1:N 관계  -->
+		<collection property="compVOs"  ofType="com.c4i.pms.main.career.vo.CareerCompVO">
+			<id column="CAREER_CODE" property="careerCode"/>
+			<result column="CAREER_COMP" property="careerComp"/>
+			<result column="CAREER_STDATE" property="careerStDate"/>
+			<result column="CAREER_FIDATE" property="careerFiDate"/>
+			<result column="CAREER_POST" property="careerPost"/>
+			<result column="CAREER_CONTENT" property="careerContent"/>
+		</collection>
+		<collection property="certVOs"  ofType="com.c4i.pms.main.career.vo.CareerCertVO">
+			<id column="CERT_CODE" property="certCode"/>
+			<result column="CERT_NAME" property="certName"/>
+			<result column="CERT_DATE" property="certDate"/>
+			<result column="CERT_AGENCY" property="certAgency"/>
+		</collection>
+		<collection property="projVOs"  ofType="com.c4i.pms.main.career.vo.CareerProjVO">
+			<id column="DET_PROJ_CODE" property="detProjCode"/>
+			<result column="PROJ_NAME" property="projName"/>
+			<result column="PROJ_CODES" property="projCodes"/>
+			<result column="USER_INDATE" property="userInDate"/>
+			<result column="USER_OUTDATE" property="userOutDate"/>
+			<result column="USER_COMP" property="userComp"/>
+			<result column="USER_JOB" property="userJob"/>
+			<result column="DET_PROJ_OS" property="detProjOs"/>
+			<result column="DET_PROJ_LANG" property="detProjLang"/>
+			<result column="DET_PROJ_DB" property="detProjDb"/>
+			<result column="DET_PROJ_TOOL" property="detProjTool"/>
+			<result column="DET_PROJ_NET" property="detProjNet"/>
+			<result column="DET_PROJ_OTHER" property="detProjOther"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 해당 사용자 이력서 존재 유무 -->
+   <select id="careerCount" resultType="int">
+   	SELECT 
+		count(*)
+	FROM pems_cjm.pms_resume
+	WHERE USER_CODE = #{userCode}; 
+   </select>
+   <!-- 자격증 존재 여부  -->
+   <select id="CheckCertCode" resultType="int">
+   	SELECT  
+		count(*) 
+	FROM pems_cjm.pms_resume_cert prc
+	WHERE prc.RES_CODE = #{resCode};
+   </select>
+   <!-- 프로젝트  존재 여부  -->
+   <select id="CheckprojCode"  resultType="int">
+   	SELECT  
+		count(*)
+   	FROM pems_cjm.pms_resume_proj prp
+	WHERE prp.DET_PROJ_CODE = #{detProjCode};
+   </select>
+   <!-- 근무경력 존재 여부  -->
+   <select id="CheckcompCode"  resultType="int">
+   	SELECT	
+		count(*)
+	FROM pems_cjm.pms_resume_career prc
+	WHERE prc.RES_CODE = #{resCode};
+   </select>
+   <!-- 이력 신상정보 및 프로젝트 내역 -->
+   <select id="selectCareerDetail" resultMap="careerMap">
+		SELECT 
+			pp.PROJ_CODE as PROJ_CODES,		
+			pp.PROJ_NAME,
+			ppu.USER_INDATE,
+			ppu.USER_OUTDATE,
+			ppu.USER_COMP,
+			ppu.USER_JOB 
+		FROM pems_cjm.pms_proj_user ppu 
+		JOIN pems_cjm.pms_proj pp
+		ON pp.PROJ_CODE = ppu.PROJ_CODE 
+		JOIN pems_cjm.pms_user pu 
+		ON pu.USER_CODE = ppu.USER_CODE
+		WHERE pu.USER_CODE = #{userCode};
+   </select>
+   <!-- 이력서 존재하는 사용자의 프로젝트 내역  -->
+   <select id="selectResProj" resultMap="careerMap">
+		SELECT 
+			pp.PROJ_CODE as PROJ_CODES,
+			pp.PROJ_NAME,
+			ppu.USER_INDATE,
+			ppu.USER_OUTDATE,
+			ppu.USER_COMP,
+			ppu.USER_JOB, 
+			prp.DET_PROJ_CODE,
+			prp.DET_PROJ_OS,	
+			prp.DET_PROJ_LANG,
+			prp.DET_PROJ_DB,
+			prp.DET_PROJ_TOOL,
+			prp.DET_PROJ_NET,
+			prp.DET_PROJ_OTHER
+		FROM pems_cjm.pms_proj pp 
+		JOIN pems_cjm.pms_proj_user ppu
+		ON pp.PROJ_CODE = ppu.PROJ_CODE
+		LEFT OUTER JOIN pems_cjm.pms_resume_proj prp 	
+		ON prp.PROJ_CODE = ppu.PROJ_CODE AND prp.USER_CODE = ppu.USER_CODE
+		WHERE ppu.USER_CODE  = #{userCode};
+   </select>
+   <!-- 신상정보  -->
+   <select id="selectResInfo" resultMap="userMap">
+		SELECT 
+			pr.RES_CODE,
+			pr.RES_SSN1,
+			pr.RES_SSN2,
+			pr.RES_CAREERDAYS,
+			pr.RES_ADDR,
+			pr.RES_EDU_NAME,
+			pr.RES_EDU_STDATE,
+			pr.RES_EDU_FIDATE,
+			pr.RES_EDU_MAJOR,
+			pu.USER_NAME,
+			pu.USER_POST,
+			pu.USER_BUSEO,
+			pu.USER_EMAIL,
+			pu.USER_LEVEL,
+			pu.USER_TEL
+		FROM pems_cjm.pms_resume pr
+		JOIN pems_cjm.pms_user pu
+		ON pr.USER_CODE = pu.USER_CODE
+		WHERE pr.USER_CODE = #{userCode};
+   </select>
+   <!-- 근무경력 -->
+   <select id="selectResCareer" resultMap="careerMap">
+		SELECT  
+			prc.RES_CAREER_CODE as CAREER_CODE,
+			prc.RES_CAREER_COMP as CAREER_COMP,
+			prc.RES_CAREER_STDATE as CAREER_STDATE,
+			prc.RES_CAREER_FIDATE as CAREER_FIDATE,
+			prc.RES_CAREER_POST as CAREER_POST,
+			prc.RES_CAREER_CENTENT as CAREER_CONTENT 
+		FROM pems_cjm.pms_resume_career prc
+		JOIN pems_cjm.pms_resume pr                         
+		ON pr.RES_CODE = prc.RES_CODE
+		WHERE pr.USER_CODE = #{userCode};
+   </select>
+   <!-- 이력서 내역  -->
+   <select id="selectResCert" resultMap="careerMap">
+		SELECT  
+			prc.RES_CERT_CODE as CERT_CODE,
+			prc.RES_CERT_NAME as CERT_NAME,
+			prc.RES_CERT_DATE as CERT_DATE,
+			prc.RES_CERT_AGENCY as CERT_AGENCY
+		FROM pems_cjm.pms_resume_cert prc
+		JOIN pems_cjm.pms_resume pr 
+		ON pr.RES_CODE = prc.RES_CODE
+		WHERE pr.USER_CODE = #{userCode};
+   </select>
+   <!-- 해당 사용자의 이력서 상세정보  -->
+	<select id="selectResumeOne" resultType="com.c4i.pms.main.career.vo.CareerVO">
+		SELECT  
+			* 
+		FROM pems_cjm.pms_resume pr
+		WHERE pr.USER_CODE = #{userCode};
+	</select>
+	<!-- 이력서 등록  -->
+   <insert id="insertResInfo">
+	INSERT INTO pems_cjm.pms_resume (
+		USER_CODE, 
+		RES_SSN1, 
+		RES_SSN2,
+		RES_CAREERDAYS,
+		RES_ADDR,
+		RES_EDU_NAME, 
+		RES_EDU_STDATE, 
+		RES_EDU_FIDATE, 
+		RES_EDU_MAJOR
+	) VALUES (
+		#{userCode},
+		#{resSsn1},
+		#{resSsn2},
+		#{resCareerDays},
+		#{resAddr},
+		#{resEduName},
+		#{resEduStDate},
+		#{resEduFiDate},
+		#{resEduMajor}
+	)
+   </insert>
+   <!-- 자격증 등록  -->
+   <insert id="insertResCert">
+	INSERT INTO pems_cjm.pms_resume_cert (
+		RES_CODE, 
+		RES_CERT_NAME, 
+		RES_CERT_DATE, 
+		RES_CERT_AGENCY
+	) VALUES(
+		#{resCode}, 
+		#{certName}, 
+		#{certDate}, 
+		#{certAgency}
+	);
+   </insert>
+   <!-- 근무경력 등록 -->
+	<insert id="insertResComp">
+		INSERT INTO pems_cjm.pms_resume_career(
+			RES_CODE, 
+			RES_CAREER_COMP, 
+			RES_CAREER_CENTENT, 
+			RES_CAREER_POST, 
+			RES_CAREER_STDATE, 
+			RES_CAREER_FIDATE
+		) VALUES (
+			#{resCode}, 
+			#{careerComp}, 
+			#{careerContent}, 
+			#{careerPost}, 	
+			#{careerStDate}, 
+			#{careerFiDate}
+		);
+	</insert>
+	<!-- 프로젝트 경력 상세정보 등록  -->
+	<insert id="insertResProj">
+		INSERT INTO pems_cjm.pms_resume_proj (
+			PROJ_CODE, 
+			USER_CODE,
+			DET_RES_CODE, 
+			DET_PROJ_OS, 
+			DET_PROJ_LANG, 
+			DET_PROJ_DB, 
+			DET_PROJ_TOOL, 
+			DET_PROJ_NET, 
+			DET_PROJ_OTHER
+		) VALUES(
+			#{projCodes}, 
+			#{userCode},
+			#{resCode}, 
+			#{detProjOs}, 
+			#{detProjLang}, 
+			#{detProjDb}, 
+			#{detProjTool}, 
+			#{detProjNet}, 	
+			#{detProjOther}
+		);
+	</insert>
+	<!-- 프로젝트 경력 상세정보 수정 -->
+	<update id="updateResProj">
+	UPDATE pems_cjm.pms_resume_proj
+	SET 
+		DET_PROJ_OS= #{detProjOs}, 
+		DET_PROJ_LANG= #{detProjLang}, 
+		DET_PROJ_DB= #{detProjDb}, 
+		DET_PROJ_TOOL= #{detProjTool},
+		DET_PROJ_NET= #{detProjNet}, 
+		DET_PROJ_OTHER= #{detProjOther} 
+	WHERE DET_PROJ_CODE= #{detProjCode};
+	</update>
+	<!-- 이력서 수정 -->
+	<update id="updateRes">
+	UPDATE pems_cjm.pms_resume
+	SET 
+		RES_SSN1=#{resSsn1}, 
+		RES_SSN2=#{resSsn2}, 
+		RES_CAREERDAYS=#{resCareerDays}, 
+		RES_ADDR=#{resAddr}, 
+		RES_EDU_NAME=#{resEduName},
+		RES_EDU_STDATE=#{resEduStDate}, 
+		RES_EDU_FIDATE=#{resEduFiDate}, 
+		RES_EDU_MAJOR=#{resEduMajor}
+	WHERE RES_CODE=#{resCode} AND USER_CODE = #{userCode};
+	</update>
+	<!-- 근무 경력 수정  -->
+	<update id="updateComp">
+	UPDATE pems_cjm.pms_resume_career
+	SET 
+		RES_CAREER_COMP=#{careerComp}, 
+		RES_CAREER_CENTENT=#{careerContent}, 
+		RES_CAREER_POST=#{careerPost}, 
+		RES_CAREER_STDATE=#{careerStDate}, 
+		RES_CAREER_FIDATE=#{careerFiDate}
+	WHERE RES_CAREER_CODE=#{careerCode} AND RES_CODE = #{resCode};
+	</update>
+	<!-- 자격증 수정  -->
+	<update id="updateCert">
+	UPDATE pems_cjm.pms_resume_cert
+		<trim prefix="SET" suffixOverrides=",">
+		RES_CERT_NAME=#{certName},
+		RES_CERT_DATE=#{certDate},
+		RES_CERT_AGENCY=#{certAgency}
+		</trim>
+	WHERE RES_CERT_CODE=#{certCode}  AND RES_CODE = #{resCode};
+	</update>
+	<!-- 자격증 삭제 -->
+	<delete id="deleteRes">
+		DELETE FROM pems_cjm.pms_resume  
+		WHERE RES_CODE = #{resCode};
+	</delete>
+	<!-- 프로젝트 경력 삭제  -->
+	<delete id="deleteProj">
+		DELETE FROM pems_cjm.pms_resume_proj 
+		WHERE USER_CODE = #{userCode};
+	</delete>
+	<!-- 근무 경력 삭제 -->
+	<delete id="deleteComp">
+		DELETE FROM pems_cjm.pms_resume_career 
+		WHERE RES_CODE= #{resCode};
+	</delete>
+	<!-- 자격증 삭제 -->
+	<delete id="deleteCert">
+		DELETE FROM pems_cjm.pms_resume_cert 
+		WHERE RES_CODE= #{resCode};
+	</delete>
+	
+	<delete id="deleteProjRow">
+		DELETE FROM pems_cjm.pms_resume_proj 
+		WHERE DET_PROJ_CODE = #{detProjCode};
+	</delete>
+	
+	<delete id="deleteCompRow">
+		DELETE FROM pems_cjm.pms_resume_career 
+		WHERE RES_CAREER_CODE = #{careerCode}
+	</delete>
+	
+	<delete id="deleteCertRow">
+		DELETE FROM pems_cjm.pms_resume_cert 
+		WHERE RES_CERT_CODE= #{certCode};
+	</delete>
+	
+</mapper>

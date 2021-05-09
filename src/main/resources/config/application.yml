@@ -1,0 +1,175 @@
+###
+### --- 구분자로 yml 내부를 구분함
+###
+
+
+# 빌드 환경
+spring:
+  profiles:
+    active: local   #1 개발 환경(default)
+#    active: dev    #2 개발 환경
+#    active: prod   #3 운영 환경
+  banner:
+    location: /config/banner.txt
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: false
+    open-in-view: false
+    show-sql: false
+  datasource:
+    sql-script-encoding: utf-8
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy    # [new] 쿼리문 뽑기
+#    driver-class-name: org.mariadb.jdbc.Driver                 # [old] 일반 jdbc
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      connection-test-query: SELECT 1
+  servlet:
+    multipart:
+      file-size-threshold: 1MB #파일이 메모리에 기록되는 임계값 (default: 0B)
+      location: D:/STSWorkSpace/branch/src/main/webapp/resources/images #업로드된 파일의 임시 저장 공간
+      max-file-size: 100MB #파일의 최대 사이즈 (default: 1MB)
+      max-request-size: 100MB #요청의 최대 사이즈 (default: 10MB)
+
+
+
+# 웹서버
+server:
+  servlet:
+    context-path: /
+    session:
+      timeout: 0
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+
+# mybatis 설정정보
+mybatis:
+  mapper-locations: classpath:mappers/main/**/*.xml
+  configuration:
+    call-setters-on-nulls: true
+    default-executor-type: reuse
+    default-statement-timeout: 300
+    jdbc-type-for-null: varchar
+    map-underscore-to-camel-case: true
+    return-instance-for-empty-row: true
+
+# solr 전용 
+pems:
+  solr:
+    baseUrl: http://demopem.pems.kr:8983/solr/         #Solr REST API URL
+    documentId: pms                                 #Solr Document ID
+    driver: com.mysql.jdbc.Driver
+    url: jdbc:mysql://demopem.pems.kr:3306/pems_cjm
+    user: root
+    password: com4in201
+
+#########################################################
+#1 개발 환경
+---
+pems:
+  profiles_name: 로컬 환경
+  serverport: 8080
+  db:
+    url: demopem.pems.kr
+    port: 3306
+    schemas: pems
+    username: root
+    password: com4in201
+  file:
+    uploadpath: D:\\test_file\\
+
+spring:
+  profiles: local
+#  Multipart 객체 정의(파일 업/다운로드)
+  servlet:
+    multipart:
+      enabled: true
+      location: D:/STSWorkSpace/branch/src/main/webapp/resources/images #업로드된 파일의 임시 저장 공간   # ${pems.filepath}
+      max-file-size: 1000000
+      max-request-size: 1000000
+
+  ## 프로젝트 자동 컴파일 모드 켜기
+  devtools:
+    livereload:
+      enabled: true
+    freemarker:
+      cache: false
+
+  datasource:
+    url: jdbc:log4jdbc:mysql://${pems.db.url}:${pems.db.port}/${pems.db.schemas}?useUnicode=true&characterEncoding=utf8  #[new] log4jdbc 적용 url
+#    url: jdbc:mysql://${pems.db.url}:${pems.db.port}/${pems.db.schemas}          #[old] 일반 url
+    username: ${pems.db.username}
+    password: ${pems.db.password}
+
+server:
+  port: ${pems.serverport}
+
+logging:
+  config: classpath:config/log4j-dev.xml
+
+
+
+
+
+#########################################################
+#2 개발 환경
+---
+pems:
+  profiles_name: 개발 환경
+  serverport: 8080
+  db:
+    url: demopem.pems.kr
+    port: 3306
+    schemas: pems_cjm
+    username: root
+    password: com4in201
+  file:
+    uploadpath: /usr/local/upload/kubs
+
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:log4jdbc:mysql://${pems.db.url}:${pems.db.port}/${pems.db.schemas}  #[new] log4jdbc 적용 url
+#    url: jdbc:mysql://${pems.db.url}:${pems.db.port}/${pems.db.schemas}          #[old] 일반 url
+    username: ${pems.db.username}
+    password: ${pems.db.password}
+
+server:
+  port: ${pems.serverport}
+
+logging:
+  config: classpath:config/log4j-prod.xml
+
+
+
+
+#########################################################
+#3 운영 환경
+---
+pems:
+  profiles_name: 운영 환경
+  serverport: 8080
+  db:
+    url: demopem.pems.kr
+    port: 3306
+    schemas: pems
+    username: root
+    password: com4in201
+  file:
+    uploadpath: /usr/local/upload/kubs
+
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:log4jdbc:mysql://${pems.db.url}:${pems.db.port}/${pems.db.schemas}  #[new] log4jdbc 적용 url
+#    url: jdbc:mysql://${pems.db.url}:${pems.db.port}/${pems.db.schemas}          #[old] 일반 url
+    username: ${pems.db.username}
+    password: ${pems.db.password}
+
+server:
+  port: ${pems.serverport}
+
+logging:
+  config: classpath:config/log4j-prod.xml

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.c4i.pms.mapper.main.FileMapper">
+	
+	<!-- 파일등록   -->
+	<insert id="insertFile">
+		INSERT INTO pems_cjm.pms_file 
+		(
+			USER_CODE,
+			FILE_NAME,
+			FILE_DIVISION,
+			FILE_SIZE,
+			FILE_PATH,
+			FILE_DATE
+		)
+		VALUES
+		(
+			#{userCode},
+			#{fileName},
+			#{fileDivision},
+			#{fileSize},
+			#{filePath},
+			#{fileDate}
+		)
+    </insert>
+    <!-- 파일 수정  -->
+    <update id="updateFile">
+    	UPDATE pems_cjm.pms_file
+		SET 
+			FILE_NAME = #{fileName}, 
+			FILE_DIVISION = #{fileDivision}, 
+			FILE_SIZE = #{fileSize}, 
+			FILE_PATH = #{filePath}, 
+			FILE_DATE = #{fileDate}
+		WHERE	USER_CODE= #{userCode};
+    </update>
+    <!-- 이미지파일 정보 상세정보  -->
+	<select id="selectImgOne" resultType="com.c4i.pms.main.file.vo.FileVO">
+		SELECT
+			FILE_CODE,
+			FILE_NAME,
+			FILE_DIVISION,
+			FILE_SIZE,
+			FILE_PATH,
+			FILE_DATE
+		FROM	pems_cjm.pms_file
+		WHERE
+			USER_CODE = #{userCode} AND FILE_DIVISION = 'img';
+	</select>
+	<!-- 이미지 파일 존재 여부 -->
+   	<select id="imgFileCheck" resultType="int">
+		SELECT
+			count(*)
+		FROM pems_cjm.pms_file
+		WHERE USER_CODE = #{userCode} AND FILE_DIVISION = 'img';
+	</select>
+</mapper>

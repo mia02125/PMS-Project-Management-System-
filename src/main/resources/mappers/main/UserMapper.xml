@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.c4i.pms.mapper.main.UserMapper">
+
+	<!-- 전체 사용자 페이지 -->
+	<select id="PMSUserList1" resultType="com.c4i.pms.main.user.vo.UserVO">
+		SELECT
+			*
+		FROM pems_cjm.pms_user pu
+		WHERE 
+			0=0
+			AND pu.USER_DELETE = 'N'
+		<if test="user != null">
+			<if test="user.userName != null and user.userName != '' ">
+				AND pu.USER_NAME LIKE CONCAT('%',#{user.userName},'%') 			
+			</if>
+			<if test="user.userPost != null and user.userPost != '' ">
+				AND pu.USER_POST = #{user.userPost}
+			</if>	
+			<if test="user.userLevel != null and user.userLevel != '' ">
+				AND pu.USER_LEVEL = #{user.userLevel}
+			</if>
+		</if>
+		ORDER BY USER_MODIFYDATE DESC
+		LIMIT #{start}, #{length};
+	</select>
+	<!-- 전체 사용자 메타데이터  -->
+	<select id="PMSUserList2" resultType="com.c4i.pms.main.user.vo.UserVO">
+		SELECT
+			*
+		FROM pems_cjm.pms_user pu
+		WHERE pu.USER_DELETE = 'N';
+	</select>
+	<!-- 투입인원리스트 검색  -->
+	<select id="InputUserList" resultType="com.c4i.pms.main.user.vo.UserVO">
+		SELECT
+			*
+		FROM pems_cjm.pms_user pu
+		WHERE 
+			0=0
+			AND pu.USER_DELETE = 'N'
+			<if test="userName != null and userName != '' ">
+				AND pu.USER_NAME LIKE CONCAT('%',#{userName},'%') 			
+			</if>
+			<if test="userPost != null and userPost != '' ">
+				AND pu.USER_POST = #{userPost}
+			</if>	
+			<if test="userLevel != null and userLevel != '' ">
+				AND pu.USER_LEVEL = #{userLevel}
+			</if>
+	</select>
+	<!-- 전체 사용자 수 -->
+	<select id="PMSUserCount" resultType="int">
+		SELECT
+			count(*)
+		FROM pems_cjm.pms_user pu
+		WHERE 
+			0=0
+			AND pu.USER_DELETE = 'N'
+		<if test="user != null">
+			<if test="user.userName != null and user.userName != '' ">
+				AND pu.USER_NAME LIKE CONCAT('%',#{user.userName},'%') 			
+			</if>
+			<if test="user.userPost != null and user.userPost != '' ">
+				AND pu.USER_POST = #{user.userPost}
+			</if>	
+			<if test="user.userLevel != null and user.userLevel != '' ">
+				AND pu.USER_LEVEL = #{user.userLevel}
+			</if>
+		</if>
+	</select>
+	<!-- 특정 사용자 상세정보  -->
+	<select id="PMSUserOne" resultType="com.c4i.pms.main.user.vo.UserVO">
+		SELECT
+			*
+		FROM pems_cjm.pms_user pu
+		WHERE pu.USER_CODE = #{userCode};
+	</select>
+	<!-- 특정 사용자 상세정보  -->
+	<select id="PMSUserOneCount" resultType="com.c4i.pms.main.user.vo.UserVO">
+		SELECT
+			count(*)
+		FROM pems_cjm.pms_user pu
+		WHERE pu.USER_CODE = #{userCode};
+	</select>
+	<!-- 특정 투입인원 상세정보 -->
+	<select id="PMSInputUserOne" resultType="com.c4i.pms.main.user.vo.UserVO">
+		SELECT
+			*
+		FROM pems_cjm.pms_user pu
+		JOIN pems_cjm.pms_proj_user ppu 
+		ON pu.USER_CODE = ppu.USER_CODE 
+		WHERE pu.USER_CODE = #{userCode};
+	</select>
+	<!-- 상세별 사용자 투입프로젝트 현황 -->
+	<select id="inputUserStatusData" resultType="com.c4i.pms.main.user.vo.projStatusVO">
+		SELECT DISTINCT 
+		 	(
+				SELECT 
+					count(*)
+				FROM	pems_cjm.pms_proj pp
+				JOIN	pems_cjm.pms_proj_user ppu
+				ON	pp.PROJ_CODE = ppu.PROJ_CODE
+				WHERE	pp.PROJ_STATUS = '미진행' AND ppu.USER_CODE = #{userCode}
+		 	) AS noStatus,
+		 	(
+		 		SELECT 
+					count(*)
+				FROM	pems_cjm.pms_proj pp
+				JOIN	pems_cjm.pms_proj_user ppu
+				ON	pp.PROJ_CODE = ppu.PROJ_CODE
+				WHERE	pp.PROJ_STATUS = '진행중' AND ppu.USER_CODE = #{userCode}
+		 	) AS stStatus,
+		 	(
+		 		SELECT 
+					count(*)
+				FROM	pems_cjm.pms_proj pp
+				JOIN	pems_cjm.pms_proj_user ppu
+				ON	pp.PROJ_CODE = ppu.PROJ_CODE
+				WHERE	pp.PROJ_STATUS = '진행완료' AND ppu.USER_CODE = #{userCode}
+		 	) AS fiStatus 	
+		FROM	pems_cjm.pms_proj pp;
+	</select>
+
+	<!-- 사용자 삭제(Y/N) -->
+	<update id="deletePMSUser">
+		UPDATE pems_cjm.pms_user
+		SET
+			USER_DELETE = #{userDelete}
+		WHERE USER_CODE = #{userCode};
+	</update>
+	<!-- 사용자 수정 -->
+	<update id="updatePMSUser">
+		UPDATE pems_cjm.pms_user pu
+		SET
+			pu.USER_POST = #{userPost},
+			pu.USER_NAME = #{userName},
+			pu.USER_LEVEL = #{userLevel},
+			pu.USER_BUSEO = #{userBuseo},
+			pu.USER_TEL = #{userTel},
+			pu.USER_EMAIL = #{userEmail},
+			pu.USER_MODIFYDATE = #{userModifyDate}
+		WHERE pu.USER_CODE = #{userCode};
+	</update>
+	<!-- 사용자 등록 -->
+	<insert id="insertUser">
+		INSERT INTO pems_cjm.pms_user
+			(
+				USER_NAME, 
+				USER_POST, 
+				USER_BUSEO, 
+				USER_LEVEL, 
+				USER_TEL, 
+				USER_EMAIL, 
+				USER_DELETE,
+				USER_MODIFYDATE
+			)
+			VALUES
+			(
+				#{userName}, 
+				#{userPost},
+				#{userBuseo}, 	
+				#{userLevel}, 
+				#{userTel},
+				#{userEmail}, 
+				#{userDelete},
+				#{userModifyDate}
+			);
+	</insert>
+	<!-- 메뉴 체크  -->
+	<select id="selectMenuCheck" resultType="map">
+		SELECT
+			ME_URL
+			,ME_NAME
+			,ME_A10
+			,ME_A20
+			,ME_A30
+			,IF ( ISNULL(MAX(ME_URL)), 'N', 'Y' ) AS URL_CHK
+		FROM KBM_MENU
+		WHERE
+		#{RQ_URL} LIKE CONCAT('%',ME_URL,'%')
+	</select>
+</mapper>

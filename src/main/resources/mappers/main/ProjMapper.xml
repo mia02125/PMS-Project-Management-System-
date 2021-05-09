@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.c4i.pms.mapper.main.ProjMapper">
+	
+	<!-- 전체 프로젝트 메타데이터 -->
+	<select id="projList" resultType="com.c4i.pms.main.proj.vo.ProjVO">
+		SELECT 
+			pp.*,
+		(
+			SELECT 
+				ppu.USER_COMP
+			FROM pems_cjm.pms_user pu 
+			JOIN pems_cjm.pms_proj_user ppu 
+			ON pu.USER_CODE = ppu.USER_CODE 
+			WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+		) AS PROJ_MANAGERCOMP,
+		(
+			SELECT 
+				pu.USER_POST
+			FROM pems_cjm.pms_user pu 
+			JOIN pems_cjm.pms_proj_user ppu 
+			ON pu.USER_CODE = ppu.USER_CODE 
+			WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+		) AS PROJ_MANAGERPOST,
+		(
+			SELECT 
+				pu.USER_NAME 
+			FROM pems_cjm.pms_user pu 
+			JOIN pems_cjm.pms_proj_user ppu 
+			ON pu.USER_CODE = ppu.USER_CODE 
+			WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+		) AS PROJ_MANAGERNAME,
+		(
+			SELECT
+			         count(*)
+			FROM   pems_cjm.pms_user pu
+			JOIN   pems_cjm.pms_proj_user ppu
+			ON   ppu.USER_CODE = pu.USER_CODE
+			WHERE   ppu.PROJ_CODE = pp.PROJ_CODE	
+		) AS PROJ_INPUTCOUNT
+		FROM pems_cjm.pms_proj pp
+		WHERE 
+			0=0
+		<if test="proj != null">
+			<if test=" proj.projName != null and proj.projName != '' ">
+				AND PROJ_NAME LIKE CONCAT('%',#{proj.projName},'%') 			
+			</if>
+			<if test=" proj.projType != null and proj.projType != '' ">
+				AND PROJ_TYPE LIKE CONCAT('%',#{proj.projType},'%')
+			</if>	
+			<if test=" proj.projLevel != null and proj.projLevel != '' ">
+				AND PROJ_LEVEL = #{proj.projLevel}
+			</if>
+		</if>
+		ORDER BY PROJ_MODIFYDATE DESC
+		LIMIT #{start}, #{length};
+	</select>
+	<!-- 프로젝트 상태별 현황 -->
+	<select id="detailProjCount" resultType="com.c4i.pms.main.proj.vo.CountVO">
+		SELECT DISTINCT
+			(
+				SELECT 
+					count(*) 
+				FROM pems_cjm.pms_proj pp
+				WHERE
+					0=0
+				 	AND pp.PROJ_STATUS = '미진행'
+				 	<if test="proj != null">
+						<if test=" proj.projName != null and proj.projName != '' ">
+							AND PROJ_NAME LIKE CONCAT('%',#{proj.projName},'%') 			
+						</if>
+						<if test=" proj.projType != null and proj.projType != '' ">
+							AND PROJ_TYPE LIKE CONCAT('%',#{proj.projType},'%')
+						</if>	
+						<if test=" proj.projLevel != null and proj.projLevel != '' ">
+							AND PROJ_LEVEL = #{proj.projLevel}
+						</if>
+					</if>
+			) AS noneCount, 
+			(
+				SELECT 
+					count(*) 
+				FROM pems_cjm.pms_proj pp
+				WHERE
+					0=0
+				 	AND pp.PROJ_STATUS = '진행중'
+				 	<if test="proj != null">
+						<if test=" proj.projName != null and proj.projName != '' ">
+							AND PROJ_NAME LIKE CONCAT('%',#{proj.projName},'%') 			
+						</if>
+						<if test=" proj.projType != null and proj.projType != '' ">
+							AND PROJ_TYPE LIKE CONCAT('%',#{proj.projType},'%')
+						</if>	
+						<if test=" proj.projLevel != null and proj.projLevel != '' ">
+							AND PROJ_LEVEL = #{proj.projLevel}
+						</if>
+					</if>
+			) AS startCount, 
+			(
+					SELECT 
+						count(*) 
+					FROM pems_cjm.pms_proj pp 
+					WHERE
+						0=0
+					 	AND pp.PROJ_STATUS = '진행완료'
+					 	<if test="proj != null">
+							<if test=" proj.projName != null and proj.projName != '' ">
+								AND PROJ_NAME LIKE CONCAT('%',#{proj.projName},'%') 			
+							</if>
+							<if test=" proj.projType != null and proj.projType != '' ">
+								AND PROJ_TYPE LIKE CONCAT('%',#{proj.projType},'%')
+							</if>	
+							<if test=" proj.projLevel != null and proj.projLevel != '' ">
+								AND PROJ_LEVEL = #{proj.projLevel}
+							</if>
+						</if>
+			) AS finishCount 
+		FROM pems_cjm.pms_proj;
+	</select>
+	<!-- 프로젝트 수  -->
+	<select id="ProjCount" resultType="int">
+		SELECT 
+			count(*)
+		FROM pems_cjm.pms_proj
+		WHERE 
+			0=0
+		<if test="proj != null">
+			<if test=" proj.projName != null and proj.projName != '' ">
+				AND PROJ_NAME LIKE CONCAT('%',#{proj.projName},'%') 			
+			</if>
+			<if test=" proj.projType != null and proj.projType != '' ">
+				AND PROJ_TYPE LIKE CONCAT('%',#{proj.projType},'%')
+			</if>	
+			<if test=" proj.projLevel != null and proj.projLevel != '' ">
+				AND PROJ_LEVEL = #{proj.projLevel}
+			</if>
+		</if>
+	</select>
+	<!-- 해당 프로젝트 메타데이터-->
+	<select id="oneProj" resultType="com.c4i.pms.main.proj.vo.ProjVO">
+		SELECT
+			*,
+			(
+				SELECT 
+					ppu.USER_COMP
+				FROM pems_cjm.pms_user pu 
+				JOIN pems_cjm.pms_proj_user ppu 
+				ON pu.USER_CODE = ppu.USER_CODE 
+				WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+			) AS PROJ_MANAGERCOMP,
+			(
+				SELECT 
+					pu.USER_POST
+				FROM pems_cjm.pms_user pu 
+				JOIN pems_cjm.pms_proj_user ppu 
+				ON pu.USER_CODE = ppu.USER_CODE 
+				WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+			) AS PROJ_MANAGERPOST,
+			(
+				SELECT 
+					pu.USER_NAME 
+				FROM pems_cjm.pms_user pu 
+				JOIN pems_cjm.pms_proj_user ppu 
+				ON pu.USER_CODE = ppu.USER_CODE 
+				WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+			) AS PROJ_MANAGERNAME
+		FROM pems_cjm.pms_proj pp
+		WHERE pp.PROJ_CODE = #{projCode};
+	</select>
+	<!-- 총 예산  -->
+	<select id="totalBudget" resultType="com.c4i.pms.main.proj.vo.ProjVO">
+		SELECT
+			sum(PROJ_BUDGET) as PROJ_BUDGET
+		FROM pems_cjm.pms_proj
+		WHERE
+			0=0
+		<if test="proj != null">
+			<if test=" proj.projName != null and proj.projName != '' ">
+				AND PROJ_NAME LIKE CONCAT('%',#{proj.projName},'%') 			
+			</if>
+			<if test=" proj.projType != null and proj.projType != '' ">
+				AND PROJ_TYPE LIKE CONCAT('%',#{proj.projType},'%')
+			</if>	
+			<if test=" proj.projLevel != null and proj.projLevel != '' ">
+				AND PROJ_LEVEL = #{proj.projLevel}
+			</if>
+		</if>
+	</select>
+
+	<!-- 프로젝트 등록 -->
+	<insert id="insertProj">
+		INSERT INTO pems_cjm.pms_proj(
+			PROJ_NAME,
+			PROJ_TYPE,
+			PROJ_STATUS,
+			PROJ_LEVEL,
+			PROJ_BUDGET,
+			PROJ_INDATE,
+			PROJ_OUTDATE,
+			PROJ_MODIFYDATE 
+		) VALUES (
+			#{projName},
+			#{projType},
+			#{projStatus},
+			#{projLevel},
+			#{projBudget},
+			#{projInDate},
+			#{projOutDate},
+			#{projModifyDate}
+		);
+	</insert>
+	<!-- 프로젝트 수정 -->
+	<update id="updateProj">
+		UPDATE pems_cjm.pms_proj pp
+		SET
+			pp.PROJ_NAME = #{projName},
+			pp.PROJ_TYPE = #{projType},
+			pp.PROJ_LEVEL = #{projLevel},
+			pp.PROJ_BUDGET = #{projBudget},
+			pp.PROJ_MODIFYDATE = #{projModifyDate},
+			pp.PROJ_STATUS = #{projStatus},
+			pp.PROJ_INDATE = #{projInDate},
+			pp.PROJ_OUTDATE = #{projOutDate}
+		WHERE pp.PROJ_CODE = #{projCode};
+	</update>
+	<!-- 프로젝트 삭제 --> 
+	<delete id="deleteProj">
+		DELETE      
+		FROM	pems_cjm.pms_proj   
+		WHERE	PROJ_CODE = #{projCode};
+	</delete>
+		
+</mapper>

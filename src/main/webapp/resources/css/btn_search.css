@@ -1,0 +1,21 @@
+
+#btn_find_search {
+	background-color: #1b5ac2 !important;
+	border-radius : 0px 0px 0px 0px !important;
+	min-width: 44.98px !important;
+}
+#btn_update_search {
+	border-radius : 0px 0px 0px 0px !important;
+	margin-left: 0px !important;
+	border: 1px solid #ffffff !important;
+	min-width: 44.98px !important;
+}
+#search_txt {
+	font-size: 16px !important;
+	width: 80% !important;
+	padding: 10px !important;
+	border: 3px solid #1b5ac2 !important;
+	border-radius : 0px 0px 0px 0px !important;
+	outline: none !important; 
+	float: left !important;
+}

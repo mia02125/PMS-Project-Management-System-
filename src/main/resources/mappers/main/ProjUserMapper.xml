@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.c4i.pms.mapper.main.ProjUserMapper">
+	<!-- 담당자 현황 -->
+	<select id="oneManager" resultType="com.c4i.pms.main.user.vo.UserVO">
+      SELECT
+      ppu.USER_CODE,
+      ppu.USER_COMP,
+      pu.USER_POST,
+      pu.USER_NAME,
+      ppu.USER_JOB,
+      ppu.USER_DIVISION,
+      pu.USER_TEL,
+      pu.USER_EMAIL,
+      ppu.USER_INDATE,
+      ppu.USER_OUTDATE
+   FROM   pems_cjm.pms_user pu
+   JOIN   pems_cjm.pms_proj_user ppu
+   ON   ppu.USER_CODE = pu.USER_CODE
+   WHERE ppu.PROJ_CODE   = #{projCode} AND   ppu.USER_DIVISION = '담당자';
+   </select>
+   	<!-- 담당자 현황 -->
+	<select id="oneManagerCount" resultType="int">
+      SELECT
+      count(*)
+   FROM   pems_cjm.pms_user pu
+   JOIN   pems_cjm.pms_proj_user ppu
+   ON   ppu.USER_CODE = pu.USER_CODE
+   WHERE ppu.PROJ_CODE   = #{projCode} AND   ppu.USER_DIVISION = '담당자';
+   </select>
+	<!-- 투입인원 현황 -->
+	<select id="inputUserList" resultType="com.c4i.pms.main.user.vo.UserVO">
+      SELECT
+         pu.USER_CODE,
+         ppu.USER_COMP,
+         pu.USER_POST,
+         pu.USER_NAME,
+         ppu.USER_JOB,
+         ppu.USER_DIVISION,
+         pu.USER_TEL,
+         pu.USER_EMAIL,
+         ppu.USER_INDATE,
+         ppu.USER_OUTDATE
+      FROM   pems_cjm.pms_user pu
+      JOIN   pems_cjm.pms_proj_user ppu
+      ON   ppu.USER_CODE = pu.USER_CODE
+      WHERE   ppu.PROJ_CODE = #{proj.projCode}
+      ORDER BY	
+		field(USER_DIVISION, '담당자') DESC,
+      	field(pu.USER_POST,'사원','대리','과장','차장','부장','대표이사') DESC,
+		USER_NAME ASC
+   </select>
+	<!-- 투입인원 수 -->
+	<select id="inputUserCount" resultType="int">
+      SELECT
+         count(*)
+      FROM   pems_cjm.pms_user pu
+      JOIN   pems_cjm.pms_proj_user ppu
+      ON   ppu.USER_CODE = pu.USER_CODE
+      WHERE   ppu.PROJ_CODE = #{proj.projCode};
+      
+   </select>
+	<!-- 클릭 시 투입인원(사용자) 데이터 가져오기  -->
+	<select id="clickInputUser" resultType="com.c4i.pms.main.user.vo.UserVO">
+      	SELECT
+			pu.USER_CODE,
+			pu.USER_NAME,
+			pu.USER_POST,
+			pu.USER_LEVEL,
+			pu.USER_BUSEO,
+			pu.USER_TEL,
+			pu.USER_EMAIL
+		FROM pems_cjm.pms_user pu
+		WHERE pu.USER_CODE = #{userCode};
+   </select>
+   <!--해당 투입인원(사용자) 데이터 가져오기  -->
+   	<select id="InputUserOne" resultType="com.c4i.pms.main.user.vo.UserVO">
+      	SELECT
+      		ppu.USER_CODE,
+			ppu.USER_DIVISION,
+			ppu.USER_COMP,
+			ppu.USER_JOB,
+			ppu.USER_INDATE,
+			ppu.USER_OUTDATE 
+		FROM pems_cjm.pms_user pu
+		JOIN pems_cjm.pms_proj_user ppu 
+		ON pu.USER_CODE = ppu.USER_CODE 
+		WHERE pu.USER_CODE = #{userCode} AND ppu.PROJ_CODE = #{projCode}; 
+   </select>
+   <!-- 해당 투입인원 투입 여부 확인  -->
+   <select id="InputProjUserOne" resultType="com.c4i.pms.main.proj.vo.ProjUserVO">
+      	SELECT
+			pu.USER_CODE,
+			ppu.USER_COMP,
+			ppu.USER_INDATE,
+			ppu.USER_OUTDATE,
+			ppu.USER_JOB
+		FROM pems_cjm.pms_user pu
+		JOIN pems_cjm.pms_proj_user ppu 
+		ON pu.USER_CODE = ppu.USER_CODE 
+		WHERE pu.USER_CODE = #{userCode} AND ppu.PROJ_CODE = #{projCode}; 
+   </select>
+   <!--해당 투입인원(사용자) 존재 여부 -->
+   	<select id="InputUserCheck" resultType="int">
+      	SELECT
+			count(*)
+		FROM pems_cjm.pms_user pu
+		JOIN pems_cjm.pms_proj_user ppu 
+		ON pu.USER_CODE = ppu.USER_CODE 
+		WHERE pu.USER_CODE = #{userCode} AND ppu.PROJ_CODE = #{projCode}; 
+   </select>
+   
+   <!-- 투입인원의 프로젝트 투입 목록 -->
+   	<select id="inputUserProjList" resultType="com.c4i.pms.main.proj.vo.ProjVO">
+	SELECT 
+		*,
+		(
+			SELECT 
+				ppu.USER_COMP
+			FROM pems_cjm.pms_user pu 
+			JOIN pems_cjm.pms_proj_user ppu 
+			ON pu.USER_CODE = ppu.USER_CODE 
+			WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+		) AS PROJ_MANAGERCOMP,
+		(
+			SELECT 
+				pu.USER_POST
+			FROM pems_cjm.pms_user pu 
+			JOIN pems_cjm.pms_proj_user ppu 
+			ON pu.USER_CODE = ppu.USER_CODE 
+			WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+		) AS PROJ_MANAGERPOST,
+		(
+			SELECT 
+				pu.USER_NAME 
+			FROM pems_cjm.pms_user pu 
+			JOIN pems_cjm.pms_proj_user ppu 
+			ON pu.USER_CODE = ppu.USER_CODE 
+			WHERE ppu.USER_DIVISION = '담당자' AND ppu.PROJ_CODE = pp.PROJ_CODE 
+		) AS PROJ_MANAGERNAME,
+		(
+			SELECT
+			         count(*)
+			FROM   pems_cjm.pms_user pu
+			JOIN   pems_cjm.pms_proj_user ppu
+			ON   ppu.USER_CODE = pu.USER_CODE
+			WHERE   ppu.PROJ_CODE = pp.PROJ_CODE	
+		) AS PROJ_INPUTCOUNT
+	FROM pems_cjm.pms_proj pp 
+	JOIN pems_cjm.pms_proj_user ppu
+	ON pp.PROJ_CODE = ppu.PROJ_CODE 
+	WHERE ppu.USER_CODE = #{userCode};
+	</select>
+	<!-- 투입인원 추가 팝업에서 사용자 현황 show -->
+	<select id="inputUserPopUpList" resultType="com.c4i.pms.main.user.vo.UserVO">
+      SELECT
+         ppu.USER_COMP,
+         pu.USER_POST,
+         pu.USER_NAME,
+         pu.USER_LEVEL,
+         pu.USER_BUSEO,
+         pu.USER_TEL
+      FROM   pems_cjm.pms_user pu
+      WHERE   pu.USER_DELETE = 'N';
+   </select>
+	<!-- 해당 프로젝트 투입인원 리스트-->
+	<select id="oneInputUser" resultType="com.c4i.pms.main.user.vo.UserVO">
+      SELECT
+         ppu.USER_COMP,
+         pu.USER_POST,
+         pu.USER_NAME,
+         pu.USER_LEVEL,
+         pu.USER_BUSEO,
+         pu.USER_TEL,
+         pu.USER_EMAIL,
+         ppu.USER_DIVISION,
+         ppu.USER_JOB,
+         ppu.USER_INDATE,
+         ppu.USER_OUTDATE
+      FROM pems_cjm.pms_proj_user ppu
+      JOIN pems_cjm.pms_user pu
+      ON ppu.USER_CODE = pu.USER_CODE
+      WHERE ppu.PROJ_CODE = #{projCode};
+   </select>
+	<!-- 투입인원 수정 -->
+	<update id="updateInputUser">
+      UPDATE pems_cjm.pms_proj_user ppu
+      SET
+         ppu.USER_DIVISION = #{userDivision},
+         ppu.USER_COMP = #{userComp},
+         ppu.USER_JOB = #{userJob},
+         ppu.USER_INDATE = #{userInDate},
+         ppu.USER_OUTDATE = #{userOutDate}
+      WHERE ppu.USER_CODE = #{userCode} AND ppu.PROJ_CODE = #{projCode};
+   </update>
+	<!-- 투입인원 삭제  -->
+	<delete id="deleteInputUser">
+      DELETE
+      FROM   pems_cjm.pms_proj_user
+      WHERE  PROJ_CODE = #{projCode} AND  USER_CODE = #{userCode};
+   </delete>
+	<!-- 투입인원 등록  -->
+	<insert id="insertInputUser">
+      INSERT INTO pems_cjm.pms_proj_user (
+         PROJ_CODE,
+         USER_CODE,
+         USER_COMP,
+         USER_DIVISION,
+         USER_JOB,
+         USER_INDATE,
+         USER_OUTDATE
+      ) VALUES (
+         #{projCode},
+         #{userCode},
+         #{userComp},
+         #{userDivision},
+         #{userJob},
+         #{userInDate},
+         #{userOutDate}
+      )
+   </insert>
+
+</mapper>
