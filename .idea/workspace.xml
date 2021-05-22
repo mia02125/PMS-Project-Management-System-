@@ -6,14 +6,30 @@
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
       </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
     </expand>
-    <select />
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:origin/master" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a66d5ebb-3d8d-4945-961e-1dbf56340f99" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/resources/js/search/autoSearch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/resources/js/search/autoSearch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/c4i/pms/config/WebMvcConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/c4i/pms/config/WebMvcConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,6 +77,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -183,6 +200,7 @@
       <workItem from="1601880462807" duration="459000" />
       <workItem from="1601880979880" duration="319000" />
       <workItem from="1620545998444" duration="5045000" />
+      <workItem from="1621686738263" duration="4804000" />
     </task>
     <task id="LOCAL-00001" summary="프로젝트 관리&#10;   - 프로젝트 현황 &#10;   - 상태별 프로젝트 개수 &#10;   - 상세 프로젝트 현황&#10;   - 담당자 현황 &#10;사용자 관리 &#10;   - 사용자 현황&#10;   - 상세 사용자 현황&#10;의문점 &#10; - VO 안에 VO 컬럼에 DB값을 넣을 수 있을까">
       <created>1601857201972</created>
@@ -209,11 +227,24 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="프로젝트 관리&#10;   - 프로젝트 현황 &#10;   - 상태별 프로젝트 개수 &#10;   - 상세 프로젝트 현황&#10;   - 담당자 현황 &#10;사용자 관리 &#10;   - 사용자 현황&#10;   - 상세 사용자 현황&#10;의문점 &#10; - VO 안에 VO 컬럼에 DB값을 넣을 수 있을까" />
@@ -301,14 +332,16 @@
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1144" y="316" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1620546936814" />
-    <state x="-1252" y="223" width="584" height="594" key="find.popup" timestamp="1620566014056">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state x="668" y="223" width="584" height="735" key="find.popup" timestamp="1621696812576">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="-1252" y="223" width="584" height="594" key="find.popup/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1620566014056" />
-    <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1620566034931">
-      <screen x="-1920" y="0" width="1920" height="1040" />
+    <state x="668" y="223" width="584" height="735" key="find.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1621696812576" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1621686767491">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="-1297" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1620566034931" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1621686767491" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

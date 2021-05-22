@@ -58,6 +58,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         resolver.setOrder(2);
         return resolver;
     }
+
+    /**
+     * 디폴트 서블릿 핸들러를 위한 설정 담당
+     * @param configurer
+     */
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();

@@ -49,17 +49,17 @@ mybatis:
   mapper-locations: classpath:mappers/main/**/*.xml
   configuration:
     call-setters-on-nulls: true
-    default-executor-type: reuse
-    default-statement-timeout: 300
+    default-executor-type: reuse # 디폴트 실행자 설정 ( reuse : preparedStatement객체 재사용 )
+    default-statement-timeout: 300 # DB로부터 응답을 얼마나 오래 기다릴 지 판단하는 타임 아웃 세팅
     jdbc-type-for-null: varchar
-    map-underscore-to-camel-case: true
+    map-underscore-to-camel-case: true # A_COLUMN을 카멜케이스 형태의 자바 컴럼과 자동으로 매핑
     return-instance-for-empty-row: true
 
 # solr 전용 
 pems:
   solr:
-    baseUrl: http://demopem.pems.kr:8983/solr/         #Solr REST API URL
-    documentId: pms                                 #Solr Document ID
+    baseUrl: http://demopem.pems.kr:8983/solr/         # Solr REST API URL
+    documentId: pms                                    # Solr Document ID
     driver: com.mysql.jdbc.Driver
     url: jdbc:mysql://demopem.pems.kr:3306/pems_cjm
     user: root
