@@ -21,7 +21,7 @@
 
 
 ## 2. 시스템 프로세스
-![image](https://user-images.githubusercontent.com/44182639/116887302-20638700-ac65-11eb-93a2-fbddc71d39fb.png)
+![image](https://user-images.githubusercontent.com/44182639/119226391-c5c29a00-bb43-11eb-9a71-6785d3abfa14.png)
 
 
 ## 3. 개발 순서 
@@ -47,7 +47,8 @@
 	- OpenJDK 1.8.0.252
 
 ## 5. DB ERD
-![image](https://user-images.githubusercontent.com/44182639/116889628-be585100-ac67-11eb-802e-81a07dc3b281.png)
+![image](https://user-images.githubusercontent.com/44182639/119226367-aaf02580-bb43-11eb-9da1-e103382abbd3.png)
+
 <br>
 <br>
 <br>
